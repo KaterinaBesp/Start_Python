@@ -1,44 +1,34 @@
-# Задана натуральная степень k. 
-# Сформировать случайным образом список коэффициентов (значения от 0 до 100) многочлена и записать в файл многочлен степени k. 
-# Пример:
-# k=2 => 2x² + 4x + 5 = 0 или x² + 5 = 0 или 10*x² = 0
+# Реализуйте RLE алгоритм: реализуйте модуль сжатия и восстановления данных.
+#  Входные и выходные данные хранятся в отдельных текстовых файлах. 
 
 
-from random import randint
-import itertools
-
-k = randint(2,7)
-
-def get_ratios(k):
-    ratios = [randint(0, 10) for i in range (k + 1)]
-    while ratios[0] == 0:
-        ratios[0] = randint(1, 10) 
-    return ratios
-
-def get_polynomial(k, ratios):
-    var = ['*x^']*(k-1) + ['*x']
-    polynomial = [[a, b, c] for a, b, c  in itertools.zip_longest(ratios, var, range(k, 1, -1), fillvalue = '') if a !=0]
-    for x in polynomial:
-        x.append(' + ')
-    polynomial = list(itertools.chain(*polynomial))
-    polynomial[-1] = ' = 0'
-    return "".join(map(str, polynomial)).replace(' 1*x',' x')
 
 
-ratios = get_ratios(k)
-polynom1 = get_polynomial(k, ratios)
-print(polynom1)
+def coding(txt):
+    count = 1
+    res = ''
+    for i in range(len(txt)-1):
+        if txt[i] == txt[i+1]:
+            count += 1
+        else:
+            res = res + str(count) + txt[i]
+            count = 1
+    if count > 1 or (txt[len(txt)-2] != txt[-1]):
+        res = res + str(count) + txt[-1]
+    return res
 
-with open('1_Polynomial.txt', 'w') as data:
-    data.write(polynom1)
+def decoding(txt):
+    number = ''
+    res = ''
+    for i in range(len(txt)):
+        if not txt[i].isalpha():
+            number += txt[i]
+        else:
+            res = res + txt[i] * int(number)
+            number = ''
+    return res
 
-    # Второй многочлен для следующей задачи:
 
-k = randint(2, 5)
-
-ratios = get_ratios(k) 
-polynom2 = get_polynomial(k, ratios)
-print(polynom2)
-
-with open('2_Polynomial.txt', 'w') as data:
-    data.write(polynom2)
+s = input("Введите текст для кодировки: ")
+print(f"Текст после кодировки: {coding(s)}")
+print(f"Текст после дешифровки: {decoding(coding(s))}")
